@@ -1,0 +1,1 @@
+{"Name":"Summer Sale","StartDate":"2018-06-21T17:00:00","EndDate":"2018-07-04T17:00:00","IsConfirmed":false,"Length":13,"FirstDay":4,"LastDay":3,"RemainingTime":"74.05:21:25.9311846"}
