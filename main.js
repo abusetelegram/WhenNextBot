@@ -1,7 +1,7 @@
 const TelegramBot = require('node-telegram-bot-api');
 
 // replace the value below with the Telegram token you receive from @BotFather
-const token = '473454313:AAFr_x4BL31dgOsUQumtOGjrINYl41YPxNc';
+const token = '473454313:AAFeHyF8W_ZbrvKlI-CyukjrTNQHuBAKzTg';
 
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, { polling: true });
@@ -42,13 +42,17 @@ bot.onText(/\/when/, (msg) => {
     });
 });
 
+function round(number){
+    return Math.round(number * 100) / 100
+}
+
 function when(g){
     var name = g.name
     var confirm = g.isConfirmed ? "已经确认" : "尚未确认";
     var result = '促销事件：' + name + '\r\n'
         + '开始日期：' + g.StartDate.format("YYYY 年 MM 月 DD 日 h:mm:ss a") + '\r\n'
         + '结束日期：' + g.EndDate.format('YYYY 年 MM 月 DD 日 h:mm:ss a') + '\r\n'
-        + '持续：' + g.EndDate.diff(g.StartDate, 'days') + '天，约 ' + Math.round(g.EndDate.diff(g.StartDate, 'weeks', true) * 100) / 100 + ' 周' + '\r\n'
+        + '持续：' + g.EndDate.diff(g.StartDate, 'days') + '天，约 ' + round(g.EndDate.diff(g.StartDate, 'weeks', true)) + ' 周' + '\r\n'
         + '状态：' + confirm
     return result
 }
@@ -93,19 +97,19 @@ function human(g){
     var r = ''
     if (g.now.isBetween(g.StartDate, g.EndDate)) {
         if (g.EndDate.diff(g.now, 'days') <= 1){
-            r = '现在就在大促销好不好！还有 ' + g.EndDate.diff(g.now, 'hours', true) + ' 小时就要结束了，还不快买？'
+            r = '现在就在大促销好不好！还有 ' + g.EndDate.diff(g.now, 'hours') + ' 小时就要结束了，还不快买？'
         }else{
             r = '现在就在大促销好不好！还有 ' + g.EndDate.diff(g.now, 'days') + ' 天就要结束了，还不快买？'
         }
     } else if (g.now.isBefore(g.StartDate)) {
         if (g.StartDate.diff(g.now, 'days') <= 1){
-            r = '嘿，距离最近一次的大促销还有 ' + g.StartDate.diff(g.now, 'hours', true) + ' 小时，钱包准备好了吗？'
+            r = '嘿，距离最近一次的大促销还有 ' + g.StartDate.diff(g.now, 'hours') + ' 小时，钱包准备好了吗？'
         }else{
             r = '嘿，距离最近一次的大促销还有 ' + g.StartDate.diff(g.now, 'days') + ' 天，钱包准备好了吗？'
         }
     } else {
         if (g.now.diff(g.EndDate, 'days') <= 1){
-             r = '好吧，大促销在 ' + g.now.diff(g.EndDate, 'hours', true) + ' 小时前就结束了。'
+             r = '好吧，大促销在 ' + g.now.diff(g.EndDate, 'hours') + ' 小时前就结束了。'
         }else{
             r = '好吧，大促销在 ' + g.now.diff(g.EndDate, 'days') + ' 天前就结束了。'
         }
