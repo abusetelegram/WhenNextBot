@@ -46,8 +46,8 @@ function when(g){
     var name = g.name
     var confirm = g.isConfirmed ? "已经确认" : "尚未确认";
     var result = '促销事件：' + name + '\r\n'
-        + '开始日期：' + g.StartDate.format("YYYY 年 MM 月 DD 日") + '\r\n'
-        + '结束日期：' + g.EndDate.format('YYYY 年 MM 月 DD 日') + '\r\n'
+        + '开始日期：' + g.StartDate.format("YYYY 年 MM 月 DD 日 h:mm:ss a") + '\r\n'
+        + '结束日期：' + g.EndDate.format('YYYY 年 MM 月 DD 日 h:mm:ss a') + '\r\n'
         + '持续：' + g.EndDate.diff(g.StartDate, 'days') + '天，约 ' + Math.round(g.EndDate.diff(g.StartDate, 'weeks', true) * 100) / 100 + ' 周' + '\r\n'
         + '状态：' + confirm
     return result
@@ -92,11 +92,23 @@ bot.onText(/\/human/, (msg => {
 function human(g){
     var r = ''
     if (g.now.isBetween(g.StartDate, g.EndDate)) {
-        r = '现在就在大促销好不好！还有 ' + g.EndDate.diff(g.now, 'days') + ' 天就要结束了，还不快买？'
+        if (g.EndDate.diff(g.now, 'days') <= 1){
+            r = '现在就在大促销好不好！还有 ' + g.EndDate.diff(g.now, 'hours', true) + ' 小时就要结束了，还不快买？'
+        }else{
+            r = '现在就在大促销好不好！还有 ' + g.EndDate.diff(g.now, 'days', true) + ' 天就要结束了，还不快买？'
+        }
     } else if (g.now.isBefore(g.StartDate)) {
-        r = '嘿，距离最近一次的大促销还有 ' + g.StartDate.diff(g.now, 'days') + ' 天，钱包准备好了吗？'
+        if (g.EndDate.diff(g.now, 'days') <= 1){
+            r = '嘿，距离最近一次的大促销还有 ' + g.StartDate.diff(g.now, 'hours', true) + ' 小时，钱包准备好了吗？'
+        }else{
+            r = '嘿，距离最近一次的大促销还有 ' + g.StartDate.diff(g.now, 'days', true) + ' 天，钱包准备好了吗？'
+        }
     } else {
-        r = '好吧，大促销在 ' + g.now.diff(g.EndDate, 'days') + ' 天前就结束了。'
+        if (g.now.diff(g.EndDate, 'days') <= 1){
+             r = '好吧，大促销在 ' + g.now.diff(g.EndDate, 'hours', true) + ' 小时前就结束了。'
+        }else{
+            r = '好吧，大促销在 ' + g.now.diff(g.EndDate, 'days', true) + ' 天前就结束了。'
+        }
     }
     return r
 }
