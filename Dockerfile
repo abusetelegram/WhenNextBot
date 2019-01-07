@@ -1,9 +1,9 @@
 FROM node:alpine
 
-COPY . /
+COPY . /bot
 
-WORKDIR /
-RUN yarn install
-RUN crontab -l | { cat; echo "0 0 * * * node /request.js"; } | crontab - 
+WORKDIR /bot
+RUN yarn install && ls -l
+RUN crontab -l | { cat; echo "0 0 * * * cd /bot && node request.js"; } | crontab - 
     
 ENTRYPOINT [ "node", "/main.js" ]
