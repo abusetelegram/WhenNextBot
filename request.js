@@ -1,22 +1,32 @@
-var request = require('request');
-var decode = require('unescape')
+const request = require('request-promise-native')
+const decode = require('unescape')
+const fs = require('fs')
 
-var process = function (error, response, body) {
+const source = request('https://www.whenisthenextsteamsale.com')
+
+const parse = function (html) {
     var myRe = /({&quot;Name)(.*)(&quot;})/g;
-    if (error !== null) {
-        console.error('err when retrive data')
-        stop
-    }
-    var a = body.match(myRe)[0]
+
+    var a = html.match(myRe)[0]
     var b = decode(a)
     console.log(b)
-    var fs = require('fs');
-    fs.writeFile("./data.txt", b, function (err) {
+
+    return fs.writeFile("./data.json", b, function (err) {
         if (err) {
-            return console.log(err);
+            console.log(err)
+            return false
         }
-        console.log("The file was saved!");
-    });
+        console.log("The file was saved!")
+        return true
+    })
 }
 
-request('https://www.whenisthenextsteamsale.com', process)
+const retry = function (err) {
+    console.log(err)
+    setTimeout(() => {
+        console.log('retry start in 5 sec')
+        source.then(parse).catch(retry)
+    }, 5000)
+}
+
+retry('first try')

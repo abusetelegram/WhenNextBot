@@ -1,7 +1,10 @@
 const TelegramBot = require('node-telegram-bot-api');
 
+// When start up, call request 
+require('./request')
+
 // replace the value below with the Telegram token you receive from @BotFather
-const token = '473454313:AAFeHyF8W_ZbrvKlI-CyukjrTNQHuBAKzTg';
+const token = process.env.BOT_TOKEN;
 
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, { polling: true });
@@ -12,7 +15,7 @@ bot.on('polling_error', (error) => {
 
 function readData() {
     fs = require('fs');
-    return fs.readFileSync("./data.txt", 'utf8')
+    return fs.readFileSync("./data.json", 'utf8')
 }
 
 // Matches "/echo [whatever]"
