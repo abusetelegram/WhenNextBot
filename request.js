@@ -1,32 +1,30 @@
-const request = require('request-promise-native')
-const decode = require('unescape')
-const fs = require('fs')
+const got = require('got')
+const cheerio = require('cheerio')
+const dayjs = require('dayjs')
+const timezone = require('dayjs/plugin/timezone')
+const utc = require('dayjs/plugin/utc')
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
-const source = request('https://www.whenisthenextsteamsale.com')
-
-const parse = function (html) {
-    var myRe = /({&quot;Name)(.*)(&quot;})/g;
-
-    var a = html.match(myRe)[0]
-    var b = decode(a)
-    console.log(b)
-
-    return fs.writeFile("./data.json", b, function (err) {
-        if (err) {
-            console.log(err)
-            return false
-        }
-        console.log("The file was saved!")
-        return true
-    })
+/*
+EndDate: "2021-01-02T18:00:00"
+FirstDay: 2
+IsConfirmed: false
+LastDay: 6
+Length: 11
+Name: "Holiday Sale"
+RemainingTime: "00:00:00"
+StartDate: "2020-12-22T18:00:00"
+*/
+module.exports = async function() {
+    const source = await got('https://www.whenisthenextsteamsale.com')
+    const $ = cheerio.load(source.body)
+    const v = $('#hdnNextSale').attr('value')
+    const res = JSON.parse(v)
+    return {
+        endDate: dayjs.tz(res.EndDate, "America/New_York"),
+        startDate: dayjs.tz(res.StartDate, "America/New_York"),
+        isComfirmed: res.IsConfirmed,
+        name: res.Name
+    }
 }
-
-const retry = function (err) {
-    console.log(err)
-    setTimeout(() => {
-        console.log('retry start in 5 sec')
-        source.then(parse).catch(retry)
-    }, 5000)
-}
-
-retry('first try')

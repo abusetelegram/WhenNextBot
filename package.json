@@ -1,8 +1,9 @@
 {
   "dependencies": {
-    "moment": "^2.23.0",
-    "node-telegram-bot-api": "^0.30.0",
-    "request-promise-native": "^1.0.5",
-    "unescape": "^1.0.1"
+    "cheerio": "^1.0.0-rc.5",
+    "dayjs": "^1.9.7",
+    "dotenv": "^8.2.0",
+    "got": "^11.8.1",
+    "telegraf": "^3.38.0"
   }
 }
