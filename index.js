@@ -19,33 +19,33 @@ const { Telegraf } = require('telegraf')
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
 const loadData = require('./request')
-let data = null
-const getData = async () => {
-    if (data) {
-        return data
-    }
-    data = await loadData()
-    return data
+
+const upcomming = async () => {
+    const d = await loadData()
+    let str = `最近有 ${d.length} 个促销\n`
+    
+    d.forEach(e => {
+        str += `
+促销事件：${d.title}
+开始日期：${d.start.format("YYYY 年 MM 月 DD 日 h:mm:ss a")}
+结束日期：${d.end.format("YYYY 年 MM 月 DD 日 h:mm:ss a")}
+持续：${d.end.diff(d.start, 'day')} 天，约等于 ${round(d.end.diff(d.start, 'week', true))} 周
+链接: ${d.link}
+`
+    })
 }
 
-const when = async () => {
-    const d = await getData()
-    return `促销事件：${d.name}
-开始日期：${d.startDate.format("YYYY 年 MM 月 DD 日 h:mm:ss a")}
-结束日期：${d.endDate.format("YYYY 年 MM 月 DD 日 h:mm:ss a")}
-持续：${d.endDate.diff(d.startDate, 'day')} 天，约等于 ${round(d.endDate.diff(d.startDate, 'week', true))} 周
-状态：${d.isConfirmed ? "已经确认" : "尚未确认"}`
-}
 const now = async () => {
-    const d = await getData()
+    const d = await loadData()
     const n = getNow()
-    if (n.isBetween(d.startDate, d.endDate)) {
+    if (n.isBetween(d[0].start, d[0].end)) {
         return '正是时候！ https://youtu.be/bUo1PgKksgw'
     }
     return '现在没促销，准备好钱包吧！'
 }
+
 const human = async () => {
-    const d = await getData()
+    const d = await loadData()
     const n = getNow()
     if (n.isBetween(d.startDate, d.endDate, null, '[]')) {
         return `现在就在大促销好不好！${d.endDate.fromNow(false)}就要结束了，还不快买？`
@@ -57,7 +57,7 @@ const human = async () => {
 }
 
 
-bot.start((ctx) => ctx.reply(`数据来源：https://www.whenisthenextsteamsale.com
+bot.start((ctx) => ctx.reply(`数据来源：https://steamdb.info/sales/history/
 项目地址：https://github.com/abusetelegram/WhenNextBot
 `))
 bot.on('callback_query', (ctx) => ctx.answerCbQuery())
