@@ -4,4 +4,4 @@ When is next Steam Sale?
 
 ## Data Source
 
-https://www.whenisthenextsteamsale.com/
+https://steamdb.info/sales/history/all/

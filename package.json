@@ -3,10 +3,8 @@
     "start:webhook": "node webhook.js"
   },
   "dependencies": {
-    "cheerio": "^1.0.0-rc.5",
     "dayjs": "^1.9.7",
     "dotenv": "^8.2.0",
-    "got": "^11.8.1",
     "puppeteer": "^15.4.0",
     "puppeteer-extra": "^3.3.4",
     "puppeteer-extra-plugin-stealth": "^2.11.0",

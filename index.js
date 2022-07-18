@@ -36,7 +36,8 @@ const upcomming = async () => {
 }
 
 const now = async () => {
-    const d = await loadData()
+    const {current} = await loadData()
+    
     const n = getNow()
     if (n.isBetween(d[0].start, d[0].end)) {
         return '正是时候！ https://youtu.be/bUo1PgKksgw'
