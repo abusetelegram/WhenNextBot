@@ -10,13 +10,11 @@ const upcoming = async () => {
     
     upcoming.forEach(e => {
         str += `
-
 促销事件：${e.title}
-开始日期：${e.start.format("YYYY 年 MM 月 DD 日 h:mm:ss a")}
-结束日期：${e.end.format("YYYY 年 MM 月 DD 日 h:mm:ss a")}
+开始日期：${e.start.format("YYYY 年 MM 月 DD 日")}
+结束日期：${e.end.format("YYYY 年 MM 月 DD 日")}
 持续：${e.end.diff(e.start, 'day')} 天，约等于 ${round(e.end.diff(e.start, 'week', true))} 周
 链接: ${e.link}
-
 `
     })
     return str
