@@ -18,7 +18,8 @@ puppeteer.use(StealthPlugin())
 
 const url = "https://steamdb.info/sales/history/";
 const launchOpts = { 
-    headless: true 
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-infobars']
 };
 if (process.platform === "darwin") {
     launchOpts.executablePath = process.env['PUPPETEER_EXECUTABLE_PATH']
