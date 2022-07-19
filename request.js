@@ -52,11 +52,20 @@ async function getData() {
 
     const current = await page.evaluate(() => {
         const panel = document.querySelector(".next-sale .container")
+        const h2 = panel.querySelector("h2").textContent
+        const unixtime = panel.querySelector('#js-sale-countdown').attributes['data-target'].nodeValue.slice(0, -3)
+        if (h2 === "When is the next Steam sale?") {
+            return {
+                live: false,
+                title: panel.querySelector('.sale-name').textContent,
+                unixtime
+            }
+        } 
         
         return {
-            title: panel.querySelector('.sale-name').textContent,
-            unixtime: panel.querySelector('#js-sale-countdown').attributes['data-target'].nodeValue.slice(0, -3)
-            // TODO Identify live or not
+            live: true,
+            title: h2,
+            unixtime
         }
     });
 
