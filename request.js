@@ -10,6 +10,7 @@ dayjs.extend(duration)
 dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.extend(customParseFormat)
+require('dayjs/locale/en')
 
 const puppeteer = require('puppeteer-extra')
 // add stealth plugin and use defaults (all evasion techniques)
@@ -120,7 +121,9 @@ async function main() {
         console.log("no cache present, getting data")
         cache = await readFile(cacheFileName).then(res => {
             const d = JSON.parse(res)
-            if (dayjs(d.operation_time).diff(dayjs(), 'hour') > refreshHour) {
+            d.operation_time = dayjs(d.operation_time)
+            if (d.operation_time.diff(dayjs(), 'hour') > refreshHour) {
+                console.log("local cache expired, refetching...")
                 return fetchAndWrite()
             }
             return d
@@ -143,8 +146,8 @@ async function main() {
             time: dayjs.unix(cache.current.unixtime)
         },
         upcoming: cache.upcoming.map(e => {
-            const start = dayjs(e.start, "D MMMM YYYY")
-            const end = dayjs(e.end, "D MMMM YYYY")
+            const start = dayjs(e.start, "D MMMM YYYY", "en")
+            const end = dayjs(e.end, "D MMMM YYYY", "en")
             return {
                 ...e,
                 start, 
