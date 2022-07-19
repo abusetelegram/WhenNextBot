@@ -5,7 +5,6 @@ if (!process.env.BOT_TOKEN) {
 }
 
 const dayjs = require('dayjs')
-const getNow = () => dayjs()
 const round = num => Math.round((num + Number.EPSILON) * 100) / 100
 const isBetween = require('dayjs/plugin/isBetween')
 const relativeTime = require('dayjs/plugin/relativeTime')
@@ -21,16 +20,18 @@ const bot = new Telegraf(process.env.BOT_TOKEN)
 const loadData = require('./request')
 
 const upcoming = async () => {
-    const d = await loadData()
-    let str = `即将有 ${d.length} 个促销\n`
+    const { upcoming } = await loadData()
+    let str = `即将有 ${upcoming.length} 个促销\n`
     
-    d.forEach(e => {
+    upcoming.forEach(e => {
         str += `
+
 促销事件：${e.title}
 开始日期：${e.start.format("YYYY 年 MM 月 DD 日 h:mm:ss a")}
 结束日期：${e.end.format("YYYY 年 MM 月 DD 日 h:mm:ss a")}
-持续：${e.end.diff(d.start, 'day')} 天，约等于 ${round(d.end.diff(d.start, 'week', true))} 周
+持续：${e.end.diff(e.start, 'day')} 天，约等于 ${round(e.end.diff(e.start, 'week', true))} 周
 链接: ${e.link}
+
 `
     })
     return str
@@ -47,7 +48,6 @@ const now = async () => {
 
 const human = async () => {
     const { current } = await loadData()
-    const n = getNow()
 
     if (current.live) {
         return `现在就在大促销好不好！${current.time.fromNow(false)}就要结束了，还不快买？`
@@ -62,7 +62,7 @@ bot.start((ctx) => ctx.reply(`数据来源：https://steamdb.info/sales/history/
 `))
 bot.on('callback_query', (ctx) => ctx.answerCbQuery())
 bot.command('now', async (ctx) => ctx.reply(await now()))
-bot.command('upcoming', async (ctx) => ctx.reply(await when()))
+bot.command('upcoming', async (ctx) => ctx.reply(await upcoming()))
 bot.command('human', async (ctx) => ctx.reply(await human()))
 bot.on('inline_query', async (ctx) => {
   const res = [

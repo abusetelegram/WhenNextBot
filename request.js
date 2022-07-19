@@ -117,6 +117,7 @@ let cache = null
 
 async function main() {
     if (!cache) {
+        console.log("no cache present, getting data")
         cache = await readFile(cacheFileName).then(res => {
             const d = JSON.parse(res)
             if (dayjs(d.operation_time).diff(dayjs(), 'hour') > refreshHour) {
@@ -129,6 +130,7 @@ async function main() {
         })
     } else {
         if (cache.operation_time.diff(dayjs(), 'hour') > refreshHour) {
+            console.log("cache expired, updating...")
             cache = fetchAndWrite()
         }
     }
@@ -151,8 +153,6 @@ async function main() {
         })
     }
 }
-
-( async () => {main()})()
 
 module.exports = main
 
