@@ -134,7 +134,7 @@ async function main() {
     } else {
         if (cache.operation_time.diff(dayjs(), 'hour') > refreshHour) {
             console.log("cache expired, updating...")
-            cache = fetchAndWrite()
+            cache = await fetchAndWrite()
         }
     }
 
