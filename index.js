@@ -52,7 +52,7 @@ const human = async () => {
     if (current.live) {
         return `现在就在大促销好不好！${current.time.fromNow(false)}就要结束了，还不快买？`
     } else {
-        return `嘿，距离最近一次的大促销 ${current.title} 还有 ${current.time.toNow(false)}，钱包准备好了吗？`
+        return `嘿，距离最近一次的大促销 ${current.title} 还有 ${current.time.toNow(true)}，钱包准备好了吗？`
     }
 }
 

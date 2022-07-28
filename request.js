@@ -122,7 +122,10 @@ async function main() {
         cache = await readFile(cacheFileName).then(res => {
             const d = JSON.parse(res)
             d.operation_time = dayjs(d.operation_time)
-            if (d.operation_time.diff(dayjs(), 'hour') > refreshHour) {
+            const diffhour = dayjs().diff(d.operation_time, 'hour')
+            console.log(`Diff hour: ${diffhour}`)
+
+            if (diffhour > refreshHour) {
                 console.log("local cache expired, refetching...")
                 return fetchAndWrite()
             }
@@ -130,9 +133,9 @@ async function main() {
         }).catch(e => {
             console.log("Unable to retrieve cache", e)
             return fetchAndWrite()
-        })
+        })  
     } else {
-        if (cache.operation_time.diff(dayjs(), 'hour') > refreshHour) {
+        if (dayjs().diff(cache.operation_time, 'hour') > refreshHour) {
             console.log("cache expired, updating...")
             cache = await fetchAndWrite()
         }
