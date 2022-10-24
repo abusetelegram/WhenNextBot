@@ -35,7 +35,14 @@ async function getData() {
         const panels = document.querySelector("#main .row").querySelectorAll(".panel-sale")
         const ls = []
         panels.forEach(e => {
-            const img = e.querySelector('img').src
+            
+            let img = e.querySelector('img')
+            if (img) {
+                img = img.src
+            } else {
+                // Some event may not have image
+                img = "https://t3.ftcdn.net/jpg/00/99/07/56/240_F_99075616_91C3OrVfac71CjwTJgz68r62dh2A0R80.jpg" // Hard code leaked image for now
+            }
             const p = e.querySelector('.panel-body')
             const a = p.querySelector("a")
             const title = a.text
@@ -43,9 +50,10 @@ async function getData() {
             const duration = p.querySelector("div").textContent.split(" — ")
             const start = duration[0]
             const end = duration[1]
+            const isMajorSale = e.classList.contains("major-sale")
 
             ls.push({
-                img, title, link, start, end
+                img, title, link, start, end, isMajorSale
             })
         })
 
