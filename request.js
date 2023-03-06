@@ -28,58 +28,59 @@ if (process.platform === "darwin") {
 
 async function getData() {
     const browser = await puppeteer.launch(launchOpts)
+    try {
+        const page = await browser.newPage()
+        await page.goto(url)
+        const upcoming = await page.evaluate(() => {
+            const panels = document.querySelector("#main .row").querySelectorAll(".panel-sale")
+            const ls = []
+            panels.forEach(e => {
 
-    const page = await browser.newPage()
-    await page.goto(url)
-    const upcoming = await page.evaluate(() => {
-        const panels = document.querySelector("#main .row").querySelectorAll(".panel-sale")
-        const ls = []
-        panels.forEach(e => {
-            
-            let img = e.querySelector('img')
-            if (img) {
-                img = img.src
-            } else {
-                // Some event may not have image
-                img = "https://t3.ftcdn.net/jpg/00/99/07/56/240_F_99075616_91C3OrVfac71CjwTJgz68r62dh2A0R80.jpg" // Hard code leaked image for now
-            }
-            const p = e.querySelector('.panel-body')
-            const a = p.querySelector("a")
-            const title = a.text
-            const link = a.href
-            const duration = p.querySelector("div").textContent.split(" — ")
-            const start = duration[0]
-            const end = duration[1]
-            const isMajorSale = e.classList.contains("major-sale")
+                let img = e.querySelector('img')
+                if (img) {
+                    img = img.src
+                } else {
+                    // Some event may not have image
+                    img = "https://t3.ftcdn.net/jpg/00/99/07/56/240_F_99075616_91C3OrVfac71CjwTJgz68r62dh2A0R80.jpg" // Hard code leaked image for now
+                }
+                const p = e.querySelector('.panel-body')
+                const a = p.querySelector("a")
+                const title = a.text
+                const link = a.href
+                const duration = p.querySelector("div").textContent.split(" — ")
+                const start = duration[0]
+                const end = duration[1]
+                const isMajorSale = e.classList.contains("major-sale")
 
-            ls.push({
-                img, title, link, start, end, isMajorSale
+                ls.push({
+                    img, title, link, start, end, isMajorSale
+                })
             })
-        })
 
-        return ls
-    });
+            return ls
+        });
 
-    const current = await page.evaluate(() => {
-        const panel = document.querySelector(".next-sale .container")
-        const h2 = panel.querySelector("h2").textContent
-        const unixtime = panel.querySelector('#js-sale-countdown').attributes['data-target'].nodeValue.slice(0, -3)
-        if (h2 === "When is the next Steam sale?") {
+        const current = await page.evaluate(() => {
+            const panel = document.querySelector(".next-sale .container")
+            const h2 = panel.querySelector("h2").textContent
+            const unixtime = panel.querySelector('#js-sale-countdown').attributes['data-target'].nodeValue.slice(0, -3)
+            if (h2 === "When is the next Steam sale?") {
+                return {
+                    live: false,
+                    title: panel.querySelector('.sale-name').textContent,
+                    unixtime
+                }
+            } 
+
             return {
-                live: false,
-                title: panel.querySelector('.sale-name').textContent,
+                live: true,
+                title: h2,
                 unixtime
             }
-        } 
-        
-        return {
-            live: true,
-            title: h2,
-            unixtime
-        }
-    });
-
-    browser.close()
+        });
+    } finally {
+        browser.close()
+    }
     
     return {
         upcoming, 
